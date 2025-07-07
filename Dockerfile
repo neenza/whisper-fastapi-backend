@@ -11,10 +11,10 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Clone and build whisper.cpp
+# Clone and build whisper.cpp using cmake
 RUN git clone https://github.com/ggerganov/whisper.cpp.git
 WORKDIR /app/whisper.cpp
-RUN make -j
+RUN cmake -B build && cmake --build build --config Release
 
 # Go back to /app and copy the FastAPI app files
 WORKDIR /app

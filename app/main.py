@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 UPLOAD_DIR = Path("app/uploads")
-WHISPER_CLI = "./whisper.cpp/main"
+WHISPER_CLI = "./whisper.cpp/build/bin/whisper"
 MODEL = "models/ggml-base.en.bin"
 
 
