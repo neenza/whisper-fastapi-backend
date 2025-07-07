@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN git clone https://github.com/ggerganov/whisper.cpp.git && \
     cd whisper.cpp && \
     make && \
-    mv main /usr/local/bin/whisper
+    mv whisper /usr/local/bin/whisper
 
 # Set up the application
 WORKDIR /app
