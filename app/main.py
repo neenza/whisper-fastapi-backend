@@ -6,7 +6,7 @@ import shutil
 
 UPLOAD_DIR = Path("app/uploads")
 WHISPER_CLI = "whisper"
-MODEL = "models/ggml-base.en.bin"
+MODEL = "models/ggml-tiny.en.bin"
 
 
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
