@@ -23,7 +23,7 @@ COPY app ./app
 
 # Download the model (tiny or base preferred for memory)
 RUN mkdir -p models
-RUN curl -L -o models/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/models/ggml-base.en.bin
+RUN curl -L -o models/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
 
 # Expose FastAPI port
 EXPOSE 8000
