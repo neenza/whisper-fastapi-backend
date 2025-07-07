@@ -21,7 +21,7 @@ async def upload_file(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         f.write(await file.read())
 
-    # If not wav, convert to wav using ffmpeg
+    # Convert to wav if needed
     if not file.filename.lower().endswith(".wav"):
         wav_path = file_path.with_suffix(".wav")
         try:
@@ -30,12 +30,26 @@ async def upload_file(file: UploadFile = File(...)):
             ], check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
             return {"error": f"Failed to convert to wav: {e}"}
-        # Optionally remove the original file to save space
         try:
             file_path.unlink()
         except Exception:
             pass
         file_path = wav_path
+
+    # Always re-encode to mono, 16kHz for whisper.cpp
+    reencoded_path = file_path.with_name(file_path.stem + "_mono16k.wav")
+    try:
+        subprocess.run([
+            "ffmpeg", "-y", "-i", str(file_path), "-ac", "1", "-ar", "16000", str(reencoded_path)
+        ], check=True, capture_output=True)
+    except subprocess.CalledProcessError as e:
+        return {"error": f"Failed to re-encode to mono/16kHz: {e}"}
+    try:
+        if file_path != reencoded_path:
+            file_path.unlink()
+    except Exception:
+        pass
+    file_path = reencoded_path
 
     output_path = file_path.with_suffix(".txt")
 
