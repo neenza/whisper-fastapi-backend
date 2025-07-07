@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile
 import subprocess
 import os
 from pathlib import Path
+import shutil
 
 UPLOAD_DIR = Path("app/uploads")
 WHISPER_CLI = "whisper"
@@ -14,13 +15,27 @@ app = FastAPI()
 
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
-    if not file.filename.endswith(".wav"):
-        return {"error": "Only .wav files are supported."}
-
+    # Accept any audio file
     file_path = UPLOAD_DIR / file.filename
 
     with open(file_path, "wb") as f:
         f.write(await file.read())
+
+    # If not wav, convert to wav using ffmpeg
+    if not file.filename.lower().endswith(".wav"):
+        wav_path = file_path.with_suffix(".wav")
+        try:
+            subprocess.run([
+                "ffmpeg", "-y", "-i", str(file_path), str(wav_path)
+            ], check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            return {"error": f"Failed to convert to wav: {e}"}
+        # Optionally remove the original file to save space
+        try:
+            file_path.unlink()
+        except Exception:
+            pass
+        file_path = wav_path
 
     output_path = file_path.with_suffix(".txt")
 
