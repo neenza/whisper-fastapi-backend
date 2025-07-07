@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN git clone https://github.com/ggerganov/whisper.cpp.git && \
     cd whisper.cpp && \
     make && \
-    find . -name "main" -o -name "whisper" -o -name "whisper-cli" | head -1 | xargs -I {} cp {} /usr/local/bin/whisper
+    find . -type f \( -name "main" -o -name "whisper" -o -name "whisper-cli" \) -exec cp {} /usr/local/bin/whisper \; -quit
 
 # Set up the application
 WORKDIR /app
