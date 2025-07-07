@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 # Install build and runtime dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential ffmpeg git curl python3 python3-pip
+    build-essential cmake ffmpeg git curl python3 python3-pip
 
 # Set working directory
 WORKDIR /app
