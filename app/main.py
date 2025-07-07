@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 UPLOAD_DIR = Path("app/uploads")
-WHISPER_CLI = "./whisper.cpp/build/bin/whisper"
+WHISPER_CLI = "whisper"
 MODEL = "models/ggml-base.en.bin"
 
 
@@ -30,10 +30,11 @@ async def upload_file(file: UploadFile = File(...)):
             WHISPER_CLI,
             "-m", MODEL,
             "-f", str(file_path),
+            "-otxt",
             "-of", str(output_path).replace(".txt", "")
         ], check=True)
-    except subprocess.CalledProcessError:
-        return {"error": "Transcription failed."}
+    except subprocess.CalledProcessError as e:
+        return {"error": f"Transcription failed: {e}"}
 
     with open(output_path, "r") as f:
         transcript = f.read()
